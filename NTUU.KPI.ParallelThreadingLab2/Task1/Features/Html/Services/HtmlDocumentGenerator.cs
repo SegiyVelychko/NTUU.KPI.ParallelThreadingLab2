@@ -18,13 +18,13 @@ public class HtmlDocumentGenerator
             return;
 
         Directory.CreateDirectory(dir);
-        var rng = new Random(42);
+        var random = new Random(54);
 
         for (int i = 0; i < count; i++)
         {
             var sb = new System.Text.StringBuilder();
             sb.AppendLine("<!DOCTYPE html><html><head><title>Doc</title></head><body>");
-            BuildBody(sb, rng, rng.Next(1, 6));
+            BuildBody(sb, random, random.Next(1, 6));
             sb.AppendLine("</body></html>");
             File.WriteAllText(Path.Combine(dir, $"doc_{i:D5}.html"), sb.ToString());
         }

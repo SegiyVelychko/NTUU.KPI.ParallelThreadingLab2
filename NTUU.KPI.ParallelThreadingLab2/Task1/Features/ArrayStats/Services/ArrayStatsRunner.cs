@@ -13,7 +13,7 @@ internal sealed class ArrayStatsRunner(IEnumerable<IArrayStatsStrategy> strategi
         Bench.PrintSeparator("Array Stats — min / max / median / avg");
 
         const int Size = 1_000_000;
-        var rng = new Random(42);
+        var rng = new Random(54);
         var data = Enumerable.Range(0, Size)
                              .Select(_ => rng.NextDouble() * 1_000_000)
                              .ToArray();

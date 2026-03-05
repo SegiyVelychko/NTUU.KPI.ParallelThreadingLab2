@@ -37,15 +37,15 @@ internal sealed class MatrixMultiplyRunner(IEnumerable<IMatrixMultiplyStrategy> 
 
     private static (double[,] A, double[,] B) GenerateMatrices(int n)
     {
-        var rng = new Random(42);
+        var random = new Random(54);
         var a = new double[n, n];
         var b = new double[n, n];
 
         for (int i = 0; i < n; i++)
             for (int j = 0; j < n; j++)
             {
-                a[i, j] = rng.NextDouble() * 100;
-                b[i, j] = rng.NextDouble() * 100;
+                a[i, j] = random.NextDouble() * 100;
+                b[i, j] = random.NextDouble() * 100;
             }
 
         return (a, b);
