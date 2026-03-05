@@ -6,7 +6,7 @@ namespace NTUU.KPI.ParallelThreadingLab2.Task2.Services;
 public static class TransactionProcessor
 {
     /// <summary>UserId > threshold → 20% cashback on converted UAH amount.</summary>
-    public const long CashbackThreshold = 10_000_000; // Bogus generates UserId in 8 symbol"
+    public const long CashbackThreshold = 50;
 
     private static readonly Dictionary<Currency, decimal> RatesToUah = new()
     {
