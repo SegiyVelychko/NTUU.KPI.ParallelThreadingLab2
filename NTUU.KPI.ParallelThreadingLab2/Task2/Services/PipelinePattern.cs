@@ -3,9 +3,11 @@ using System.Threading.Tasks.Dataflow;
 
 namespace NTUU.KPI.ParallelThreadingLab2.Task2.Services;
 
-public sealed class PipelinePattern(int maxDegree = 4)
+public sealed class PipelinePattern
 {
-    private readonly int _maxDegree = maxDegree;
+    private readonly int _maxDegree;
+
+    public PipelinePattern(int maxDegree = 4) => _maxDegree = maxDegree;
 
     public async Task<AggregationResult> RunAsync(IEnumerable<Transaction> transactions)
     {
@@ -17,12 +19,24 @@ public sealed class PipelinePattern(int maxDegree = 4)
         long cashbackCount = 0;
 
         // ── Stage 1: Currency conversion ───────────────────────────────────
-        var processBlock = new TransformBlock<Transaction, ProcessedTransaction>(
+        var convertBlock = new TransformBlock<Transaction, (Transaction Tx, decimal AmountUah)>(
             tx =>
             {
                 decimal uah = TransactionProcessor.ConvertToUah(tx);
-                decimal cashback = TransactionProcessor.CalculateCashback(tx, uah);
-                return TransactionProcessor.Finalize(tx, uah, cashback);
+                return (tx, uah);
+            },
+            new ExecutionDataflowBlockOptions
+            {
+                MaxDegreeOfParallelism = _maxDegree,
+                BoundedCapacity = _maxDegree * 16,
+            });
+
+        // ── Stage 2: Cashback calculation ──────────────────────────────────
+        var cashbackBlock = new TransformBlock<(Transaction Tx, decimal AmountUah), ProcessedTransaction>(
+            item =>
+            {
+                decimal cashback = TransactionProcessor.CalculateCashback(item.Tx, item.AmountUah);
+                return TransactionProcessor.Finalize(item.Tx, item.AmountUah, cashback);
             },
             new ExecutionDataflowBlockOptions
             {
@@ -48,13 +62,14 @@ public sealed class PipelinePattern(int maxDegree = 4)
 
         // ── Link stages ────────────────────────────────────────────────────
         var linkOptions = new DataflowLinkOptions { PropagateCompletion = true };
-        processBlock.LinkTo(aggregateBlock, linkOptions);
+        convertBlock.LinkTo(cashbackBlock, linkOptions);
+        cashbackBlock.LinkTo(aggregateBlock, linkOptions);
 
         // ── Produce ────────────────────────────────────────────────────────
         foreach (var tx in transactions)
-            await processBlock.SendAsync(tx);
+            await convertBlock.SendAsync(tx);
 
-        processBlock.Complete();
+        convertBlock.Complete();
         await aggregateBlock.Completion;
 
         return new AggregationResult(count, totalAmount, totalCashback, totalFinal, cashbackCount);
