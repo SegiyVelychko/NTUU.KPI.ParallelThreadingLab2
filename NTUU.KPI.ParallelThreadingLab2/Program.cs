@@ -1,20 +1,16 @@
-using NTUU.KPI.ParallelThreadingLab2.Features.Task1.ArrayStats.Services;
-using NTUU.KPI.ParallelThreadingLab2.Features.Task1.ArrayStats.Strategies;
-using NTUU.KPI.ParallelThreadingLab2.Features.Task1.Html.Services;
-using NTUU.KPI.ParallelThreadingLab2.Features.Task1.Html.Strategies;
-using NTUU.KPI.ParallelThreadingLab2.Features.Task1.Matrics.Services;
-using NTUU.KPI.ParallelThreadingLab2.Features.Task1.Matrics.Strategies;
 using NTUU.KPI.ParallelThreadingLab2.Task1.Features.ArrayStats.Interfaces;
+using NTUU.KPI.ParallelThreadingLab2.Task1.Features.ArrayStats.Services;
+using NTUU.KPI.ParallelThreadingLab2.Task1.Features.ArrayStats.Strategies;
 using NTUU.KPI.ParallelThreadingLab2.Task1.Features.Html.Interfaces;
+using NTUU.KPI.ParallelThreadingLab2.Task1.Features.Html.Services;
+using NTUU.KPI.ParallelThreadingLab2.Task1.Features.Html.Strategies;
 using NTUU.KPI.ParallelThreadingLab2.Task1.Features.Matrics.Interfaces;
-
-var parser = new HtmlTagParser();
-var generator = new HtmlDocumentGenerator();
+using NTUU.KPI.ParallelThreadingLab2.Task1.Features.Matrics.Services;
+using NTUU.KPI.ParallelThreadingLab2.Task1.Features.Matrics.Strategies;
+using NTUU.KPI.ParallelThreadingLab2.Task2.Services;
 
 Console.WriteLine("Machine Processor Count: " + Environment.ProcessorCount);
 Console.WriteLine("Machine OS Version: " + Environment.OSVersion);
-
-Console.WriteLine($"\n{new string('=', 50)} Task1 {new string('=', 50)}");
 
 var degrees = new HashSet<int>(
     [
@@ -28,6 +24,11 @@ var degrees = new HashSet<int>(
         Environment.ProcessorCount + Environment.ProcessorCount / 3,
         Environment.ProcessorCount + Environment.ProcessorCount / 2,
     ]);
+
+Console.WriteLine($"\n{new string('=', 50)} Task1 {new string('=', 50)}");
+
+var parser = new HtmlTagParser();
+var generator = new HtmlDocumentGenerator();
 
 ITagFrequencyStrategy[] strategies =
 [
@@ -61,3 +62,7 @@ IMatrixMultiplyStrategy[] matrixStrategies =
 await new MatrixMultiplyRunner(matrixStrategies).RunAsync();
 
 Console.WriteLine($"\n{new string('=', 50)} Task2 {new string('=', 50)}");
+
+var transactionProcessingRunner = new TransactionProcessingRunner(count: 2_000_000, degrees: [.. degrees]);
+
+await transactionProcessingRunner.RunAsync();

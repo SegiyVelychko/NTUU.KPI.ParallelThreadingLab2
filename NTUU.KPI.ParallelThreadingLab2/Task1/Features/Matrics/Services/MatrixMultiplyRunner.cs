@@ -1,5 +1,4 @@
-﻿using NTUU.KPI.ParallelThreadingLab2.Features.Task1.ArrayStats.Strategies;
-using NTUU.KPI.ParallelThreadingLab2.Helpers;
+﻿using NTUU.KPI.ParallelThreadingLab2.Helpers;
 using NTUU.KPI.ParallelThreadingLab2.Task1.Features.Matrics.Interfaces;
 using NTUU.KPI.ParallelThreadingLab2.Task1.Features.Matrics.Strategies;
 
